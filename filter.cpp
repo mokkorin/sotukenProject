@@ -40,7 +40,7 @@ namespace filter
 							}
 							else{
 								//k = sqrt(pow(fg[y*src.cols + x] - fg[(dy + j)*src.cols + (dx + i)], 2));
-								k = fg[(dy + j)*src.cols + (dx + i)];
+								k = 1 / fg[y*src.cols + x];
 							}
 
 							kernel[j*size + i] = gauss(dist, sigmaS) * gauss(color, sigmaC);
@@ -100,10 +100,10 @@ namespace filter
 						else{
 							dist = sqrt((x - (dx + i))*(x - (dx + i)) + (y - (dy + j))*(y - (dy + j)));
 							color = sqrt(pow((double)src.data[y * src.step + x * src.elemSize()] - (double)src.data[(dy + j) * src.step + (dx + i) * src.elemSize()], 2));
-							k = 50 / ( fg[y*src.cols + x] - (fg[y*src.cols + x] - fg[(dy + j)*src.cols + (dx + i)]));
-							
-								//k = fg[(dy + j)*src.cols + (dx + i)];
-							
+							//k = 50 / ( fg[y*src.cols + x] - (fg[y*src.cols + x] - fg[(dy + j)*src.cols + (dx + i)]));
+							//k = 50 / fg[(dy + j)*src.cols + (dx + i)];
+							k = 20 / fg[y*src.cols + x];
+
 
 							kernel[j*size + i] = gauss(dist, sigmaS) * gauss(color, k);
 						}

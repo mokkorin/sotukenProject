@@ -3,6 +3,15 @@
 
 #define GENERATE 0
 
+
+void MouseCall(int event, int x, int y, int flags, void *data);
+
+void g_cut(cv::Mat src, cv::Mat &dst, cv::Rect roi);
+void g_cut(cv::Mat src, cv::Mat &dst, cv::Mat mask, cv::Mat mb);
+void likeliHood(cv::Mat src, cv::Mat dst, std::vector<Cluster> cluster);
+void likeliHood(cv::Mat src, cv::Mat dst, cv::Mat mask, std::vector<Cluster> cluster);
+void likeliHood(cv::Mat src, std::vector<Cluster> cluster, std::vector<double> &like);
+
 namespace my
 {
 	void resize(cv::Mat src)
@@ -16,43 +25,63 @@ namespace my
 		cv::namedWindow("RESIZE", cv::WINDOW_AUTOSIZE);
 		cv::imshow("RESIZE", dst);
 
-		cv::imwrite("tori.jpg", dst);
+		cv::imwrite("sport.jpg", dst);
+		cv::waitKey(0);
 
 	}
 
-	void colorDiff(cv::Mat src)
+	void edge(cv::Mat src1)
 	{
-		int x, y, i, j;
-		double r = 0, g = 0, b = 0, c = 0;
-		double dr = 0, dg = 0, db = 0, dc = 0;
-		for (y = 0; y < src.rows; y++){
-			for (x = 0; x < src.cols; x++){
-				
-			}
+		cv::Mat src2 = cv::imread("filter_risu.jpg", cv::IMREAD_GRAYSCALE);
+		cv::Mat dst1, dst2;
+
+		cv::Sobel(src1, dst1, CV_32F, 1, 1);
+		cv::Sobel(src2, dst2, CV_32F, 1, 1);
+
+		cv::namedWindow("laplacian1", cv::WINDOW_AUTOSIZE);
+		cv::namedWindow("laplacian2", cv::WINDOW_AUTOSIZE);
+
+		cv::imshow("laplacian1", dst1);
+		cv::imshow("laplacian2", dst2);
+
+		cv::waitKey(0);
+	}
+
+	void filter(cv::Mat src)
+	{
+		cv::Mat dst;
+
+		for (int i = 0; i < 10; i++){
+			cv::bilateralFilter(src, dst, 15, 50, 10, cv::BORDER_DEFAULT);
+			dst.copyTo(src);
 		}
+		cv::imshow("ds1", dst);
+
+		cv::waitKey(0);
 	}
 };
 
-void MouseCall(int event, int x, int y, int flags, void *data);
-
-void g_cut(cv::Mat src, cv::Mat &dst, cv::Rect roi);
-void g_cut(cv::Mat src, cv::Mat &dst, cv::Mat mask, cv::Mat mb);
-void likeliHood(cv::Mat src, cv::Mat dst, std::vector<Cluster> cluster);
-void likeliHood(cv::Mat src, cv::Mat dst, cv::Mat mask, std::vector<Cluster> cluster);
-void likeliHood(cv::Mat src, std::vector<Cluster> cluster, std::vector<double> &like);
 
 
 int main(void)
 {
 	// “ü—Í‰æ‘œ
-	cv::Mat src = cv::imread("tori.jpg", cv::IMREAD_UNCHANGED);
+	cv::Mat src = cv::imread("sport.jpg", cv::IMREAD_UNCHANGED);
 	cv::Point first(227, 189);
 	cv::Point end(614, 536);
 	cv::Mat maskF, copy, maskB, mask;
 	cv::Mat gc;
+	cv::Mat honke;
+	std::string file_name;
+	double sr[5] = { 1, 2, 3, 4, 5 };
+	double ss[5] = { 30, 10, 150, 300, 400 };
 
 	if (src.empty()) return 0;
-		
+#if	GENERATE == 0
+
+	/*my::filter(src);
+	return 0;*/
+
 	/*my::resize(src);
 	cv::waitKey(0);
 	return 0;*/
@@ -66,7 +95,6 @@ int main(void)
 
 
 	//hito2
-	
 	/*first.x = 455;
 	first.y = 198;
 	end.x = 689;
@@ -74,11 +102,10 @@ int main(void)
 	
 
 	//tori
-	
-	first.x = 129;
+	/*first.x = 129;
 	first.y = 89;
 	end.x = 296;
-	end.y = 264;
+	end.y = 264;*/
 	
 
 	//hana
@@ -95,24 +122,75 @@ int main(void)
 	end.x = 753;
 	end.y = 515;*/
 
-	//risu
+	//risu  60
 	/*first.x = 49;
 	first.y = 349;
 	end.x = 385;
 	end.y = 633;*/
+
+	//buta
+	/*first.x = 266;
+	first.y = 112;
+	end.x = 430;
+	end.y = 403;*/
+
+	//momiji
+	/*first.x = 131;
+	first.y = 126;
+	end.x = 607;
+	end.y = 412;*/
+
+	//usagi
+	/*first.x = 223;
+	first.y = 123;
+	end.x = 477;
+	end.y = 358;*/
+
+	//kuma
+	/*first.x = 233;
+	first.y = 363;
+	end.x = 438;
+	end.y = 780;*/
+
+	//tori2
+	/*first.x = 52;
+	first.y = 206;
+	end.x = 580;
+	end.y = 573;*/
+
+	//neko
+	/*first.x = 237;
+	first.y = 85;
+	end.x = 492;
+	end.y = 392;*/
+
+	//sport
+	first.x = 105;
+	first.y = 90;
+	end.x = 246;
+	end.y = 390;
 
 	cv::Mat b, g, r, bi, likeB, likeF;
 	std::vector<cv::Mat> bgr;
 	std::vector<cv::Mat> re;
 
 	cv::Rect roi(first.x - 10, first.y - 10, end.x - first.x + 20, end.y - first.y + 20);
+
+	if (roi.x < 0){
+		roi.x = 0;
+	}
+	if (roi.y = 0){
+		roi.y = 0;
+	}
+	if (roi.br().x > src.rows){
+		roi.width = src.rows - roi.x;
+	}
+	
+	if (roi.br().y > src.cols){
+		roi.width = src.cols - roi.y;
+	}
 	cv::Mat fg_image = cv::Mat(src, roi);
 
-	double ss[5] = { 30, 10, 150, 300, 400 };
-	double sr[5] = { 1, 5, 10, 20, 50 };
-
-	std::string file_name;
-	
 	//Cluster fore[CLUSTER_SIZE], back[CLUSTER_SIZE];
 	std::vector<Cluster> fore(fg_image.cols + fg_image.rows);
 	std::vector<Cluster> back(src.cols + src.rows);
@@ -191,12 +269,12 @@ int main(void)
 	//kmeans::run(likeh, fore);
 
 	
-	for (int i = 0; i < fore.size(); i++){
+	for (int i = 0; i < (int)fore.size(); i++){
 		fore[i].dataClear();
 		back[i].dataClear();
 	}
 
-	cv::bilateralFilter(src, bi, 15, 100, 9, cv::BORDER_DEFAULT);
+	cv::bilateralFilter(src, bi, 15, 40, 9, cv::BORDER_DEFAULT);
 
 	cv::namedWindow("honke", cv::WINDOW_AUTOSIZE);
 	cv::imshow("honke", bi);
@@ -223,16 +301,17 @@ int main(void)
 	cv::namedWindow("g-cut-f", cv::WINDOW_AUTOSIZE);
 	cv::imshow("g-cut-f", mask);
 	
-	g_cut(gc, mask, roi);
+	g_cut(bi, mask, roi);
 	cv::namedWindow("g-cut", cv::WINDOW_AUTOSIZE);
 	cv::imshow("g-cut", mask);
+	cv::imwrite("g_cut.jpg", mask);
 
-#if GENERATE == 1
+#elif GENERATE == 1
 	int i, j;
 	for (i = 0; i < 5; i++){
 		for (j = 0; j < 5; j++){
 			cv::bilateralFilter(src, honke, 15, ss[i], sr[j], cv::BORDER_DEFAULT);
-			file_name = "inu\\s" + std::to_string((int)ss[i]) + "r" + std::to_string((int)sr[j]) + ".jpg";
+			file_name = "Lenna\\s" + std::to_string((int)ss[i]) + "r" + std::to_string((int)sr[j]) + ".png";
 			cv::imwrite(file_name, honke);
 		}
 	}
