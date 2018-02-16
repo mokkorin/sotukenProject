@@ -25,8 +25,7 @@ namespace my
 		cv::namedWindow("RESIZE", cv::WINDOW_AUTOSIZE);
 		cv::imshow("RESIZE", dst);
 
-		cv::imwrite("sport.jpg", dst);
-		cv::waitKey(0);
+		cv::imwrite("neko2.jpg", dst);
 
 	}
 
@@ -66,7 +65,7 @@ namespace my
 int main(void)
 {
 	// “ü—Í‰æ‘œ
-	cv::Mat src = cv::imread("sport.jpg", cv::IMREAD_UNCHANGED);
+	cv::Mat src = cv::imread("hituji.jpg", cv::IMREAD_UNCHANGED);
 	cv::Point first(227, 189);
 	cv::Point end(614, 536);
 	cv::Mat maskF, copy, maskB, mask;
@@ -109,12 +108,11 @@ int main(void)
 	
 
 	//hana
-	/*
-	first.x = 185;
-	first.y = 109;
-	end.x = 401;
-	end.y = 302;
-	*/
+	/*first.x = 157;
+	first.y = 26;
+	end.x = 512;
+	end.y = 344;*/
+	
 
 	//hito1
 	/*first.x = 658;
@@ -159,16 +157,64 @@ int main(void)
 	end.y = 573;*/
 
 	//neko
-	/*first.x = 237;
-	first.y = 85;
-	end.x = 492;
-	end.y = 392;*/
+	/*first.x = 175;
+	first.y = 112;
+	end.x = 365;
+	end.y = 303;*/
 
-	//sport
-	first.x = 105;
-	first.y = 90;
-	end.x = 246;
-	end.y = 390;
+	//taiyaki
+	/*first.x = 152;
+	first.y = 117;
+	end.x = 579;
+	end.y = 433;*/
+
+	//nishin
+	/*first.x = 49;
+	first.y = 39;
+	end.x = 591;
+	end.y = 288;*/
+
+	//saru
+	/*first.x = 32;
+	first.y = 135;
+	end.x = 310;
+	end.y = 355;*/
+
+	//uma
+	/*first.x = 39;
+	first.y = 48;
+	end.x = 378;
+	end.y = 393;*/
+
+	//oohashi
+	/*first.x = 188;
+	first.y = 69;
+	end.x = 462;
+	end.y = 414;*/
+
+	//ashika
+	/*first.x = 366;
+	first.y = 125;
+	end.x = 599;
+	end.y = 470;*/
+
+	//koara
+	/*first.x = 76;
+	first.y = 105;
+	end.x = 404;
+	end.y = 397;*/
+
+	//neko2
+	/*first.x = 274;
+	first.y = 30;
+	end.x = 560;
+	end.y = 476;*/
+
+	//hituji
+	first.x = 273;
+	first.y = 87;
+	end.x = 598;
+	end.y = 376;
 
 	cv::Mat b, g, r, bi, likeB, likeF;
 	std::vector<cv::Mat> bgr;
@@ -179,16 +225,17 @@ int main(void)
 	if (roi.x < 0){
 		roi.x = 0;
 	}
-	if (roi.y = 0){
+	if (roi.y < 0){
 		roi.y = 0;
 	}
-	if (roi.br().x > src.rows){
-		roi.width = src.rows - roi.x;
+	if (roi.br().y > src.rows){
+		roi.height = src.rows - roi.y;
 	}
-	
-	if (roi.br().y > src.cols){
-		roi.width = src.cols - roi.y;
+	if (roi.br().x > src.cols){
+		roi.width = src.cols - roi.x;
 	}
+
+	std::cout << roi.tl() << roi.br() << std::endl;
 	cv::Mat fg_image = cv::Mat(src, roi);
 
 	//Cluster fore[CLUSTER_SIZE], back[CLUSTER_SIZE];

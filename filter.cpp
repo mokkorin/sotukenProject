@@ -102,7 +102,7 @@ namespace filter
 							color = sqrt(pow((double)src.data[y * src.step + x * src.elemSize()] - (double)src.data[(dy + j) * src.step + (dx + i) * src.elemSize()], 2));
 							//k = 50 / ( fg[y*src.cols + x] - (fg[y*src.cols + x] - fg[(dy + j)*src.cols + (dx + i)]));
 							//k = 50 / fg[(dy + j)*src.cols + (dx + i)];
-							k = 20 / fg[y*src.cols + x];
+							k = 80 / fg[y*src.cols + x];
 
 
 							kernel[j*size + i] = gauss(dist, sigmaS) * gauss(color, k);
